@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	"github.com/rizface/golang-api-template/database"
 	"github.com/rizface/golang-api-template/system/logger"
 	"github.com/rizface/golang-api-template/system/router"
@@ -8,6 +9,7 @@ import (
 )
 
 func main() {
+	godotenv.Load()
 	// Create new logger
 	log := logger.CreateErrorLogger()
 

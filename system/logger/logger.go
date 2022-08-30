@@ -13,14 +13,17 @@ import (
 func getRootPath() string {
 	_, b, _, _ := runtime.Caller(0)
 	currentPath := filepath.Dir(b)
-	regex, _ := regexp.Compile("golang-api-template.*")
-	rootPath := regex.ReplaceAll([]byte(currentPath), []byte("golang-api-template/log/error.log"))
+
+	regexPattern := fmt.Sprintf("%s%s", os.Getenv("SERVICE_NAME"), ".*")
+	regex, _ := regexp.Compile(regexPattern)
+
+	logPath := fmt.Sprintf("%s%s", os.Getenv("SERVICE_NAME"), "/log/error.log")
+	rootPath := regex.ReplaceAll([]byte(currentPath), []byte(logPath))
 	return string(rootPath)
 }
 
 func CreateErrorLogger() *logrus.Logger {
 	path := getRootPath()
-	fmt.Println(path)
 	errorLogFile, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		fmt.Println("Server Shutdown, Log File Not Found")

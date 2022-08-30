@@ -6,11 +6,13 @@ import (
 	"os"
 	"testing"
 
+	"github.com/joho/godotenv"
 	"github.com/rizface/golang-api-template/app/middleware"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestErrorMiddleware(t *testing.T) {
+	godotenv.Load("../../.env")
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, err := os.OpenFile("/notexistsfile.txt", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 		if err != nil {
