@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  welcome-service:
+    container_name: 'welcome-service'
+    image: golang-live-reload:latest
+    volumes:
+      - './:/app'
+    ports:
+      - "9000:9000"
+    command: 'air /app/main.go'

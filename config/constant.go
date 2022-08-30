@@ -1,0 +1,8 @@
+package config
+
+const (
+	JWT_BEARER_SECRET  = "BEARER_SECRET"
+	JWT_REFRESH_SECRET = "REFRESH_SECRET"
+	JWT_ISSUER         = "RIZFACE"
+	JWT_EXPIRE         = 48 // IN HOUR
+)
