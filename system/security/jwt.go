@@ -2,7 +2,6 @@ package security
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"time"
 
@@ -24,7 +23,7 @@ type JwtClaim struct {
 	jwt.RegisteredClaims
 }
 
-func EncodeDataToToken(secret string, userData *securityentity.UserData) string {
+func EncodeDataToToken(secret string, userData *securityentity.UserData, expired time.Time) string {
 	claim := JwtClaim{
 		*userData,
 		jwt.RegisteredClaims{
@@ -32,14 +31,14 @@ func EncodeDataToToken(secret string, userData *securityentity.UserData) string 
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			Subject:   userData.Name,
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(config.JWT_EXPIRE * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(expired),
 		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	tokenString, err := token.SignedString([]byte(secret))
 	if err != nil {
-		fmt.Printf(err.Error())
+		panic(err)
 	}
 
 	return tokenString
@@ -47,8 +46,8 @@ func EncodeDataToToken(secret string, userData *securityentity.UserData) string 
 
 func GenerateToken(userData *securityentity.UserData) securityentity.GeneratedResponseJwt {
 	bearerSecret, refreshSecret := getSecret()
-	bearerToken := EncodeDataToToken(bearerSecret, userData)
-	refreshToken := EncodeDataToToken(refreshSecret, userData)
+	bearerToken := EncodeDataToToken(bearerSecret, userData, time.Now().Add(24*time.Hour))
+	refreshToken := EncodeDataToToken(refreshSecret, userData, time.Now().Add(24*30*time.Hour))
 
 	return securityentity.GeneratedResponseJwt{
 		UserData: *userData,

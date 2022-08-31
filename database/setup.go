@@ -3,7 +3,6 @@ package database
 import (
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,9 +19,7 @@ func New() *Database {
 }
 
 func (database *Database) Setup(logger *logrus.Logger) {
-	err := godotenv.Load()
-	if err != nil {
-		logger.Error(err.Error())
+	if os.Getenv("DATABASE_NAME") == "" {
 		database.Name = "postgres"
 		database.Host = "localhost"
 		database.Port = "5432"
