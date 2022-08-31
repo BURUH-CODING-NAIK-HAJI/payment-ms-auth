@@ -27,4 +27,8 @@ var (
 		Code:    http.StatusNotFound,
 		Message: "USER_NOT_FOUND",
 	}
+	BAD_REQUEST = Error{
+		Code:    http.StatusBadRequest,
+		Message: "BAD_REQUEST",
+	}
 )

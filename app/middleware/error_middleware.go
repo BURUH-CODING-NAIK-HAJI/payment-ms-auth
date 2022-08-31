@@ -6,6 +6,7 @@ import (
 
 	"github.com/dchest/uniuri"
 	"github.com/go-errors/errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/rizface/golang-api-template/app/entity/responseentity"
 	"github.com/rizface/golang-api-template/app/errorgroup"
 	"github.com/rizface/golang-api-template/system/logger"
@@ -25,6 +26,9 @@ func ErrorHandler(next http.Handler) http.Handler {
 				if group, ok := err.(errorgroup.Error); ok {
 					errStruct.Code = group.Code
 					errStruct.Message = group.Message
+				} else if validatorError, ok := err.(validation.Errors); ok {
+					errStruct.Code = errorgroup.BAD_REQUEST.Code
+					errStruct.Message = validatorError.Error()
 				} else {
 					errStruct.Code = errorgroup.InternalServerError.Code
 					errStruct.Message = errorgroup.InternalServerError.Message

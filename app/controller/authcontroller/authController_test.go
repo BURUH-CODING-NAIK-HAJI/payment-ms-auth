@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/dchest/uniuri"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/rizface/golang-api-template/app/controller/authcontroller"
 	"github.com/rizface/golang-api-template/app/entity/requestentity"
 	"github.com/rizface/golang-api-template/app/entity/responseentity"
@@ -73,4 +74,28 @@ func TestAuthControllerSuccess(t *testing.T) {
 	assert.Equal(t, payload.Username, generatedTokenSchema.UserData.Username)
 	assert.Equal(t, "string", reflect.TypeOf(generatedTokenSchema.TokenSchema.Bearer).String())
 	assert.Equal(t, "string", reflect.TypeOf(generatedTokenSchema.TokenSchema.Refresh).String())
+}
+
+func TestAuthControllerFailedPayloadNotAllowed(t *testing.T) {
+	defer func() {
+		err := recover()
+		if err != nil {
+			_, ok := err.(validation.Errors)
+			assert.True(t, ok)
+		}
+	}()
+
+	repository := new(Mock)
+	service := authservice.New(repository)
+	controller := authcontroller.New(service)
+	router := router.CreateRouter()
+	authcontroller.Setup(router, controller)
+
+	repository.On("FindOne", "valid").Return("valid")
+	payload := requestentity.Login{}
+
+	payloadBytes, _ := json.Marshal(payload)
+	request := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(payloadBytes))
+	recorder := httptest.NewRecorder()
+	controller.Login(recorder, request)
 }
