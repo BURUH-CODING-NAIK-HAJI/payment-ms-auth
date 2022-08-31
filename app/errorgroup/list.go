@@ -23,4 +23,8 @@ var (
 		Code:    http.StatusBadRequest,
 		Message: "HEADER_PAYLOAD_NOT_ALLOWED",
 	}
+	USER_NOT_FOUND = Error{
+		Code:    http.StatusNotFound,
+		Message: "USER_NOT_FOUND",
+	}
 )

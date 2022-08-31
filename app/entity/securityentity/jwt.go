@@ -1,8 +1,9 @@
 package securityentity
 
 type UserData struct {
-	Id   string
-	Name string
+	Id       string `json:"id"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
 }
 
 type TokenSchema struct {

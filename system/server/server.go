@@ -6,25 +6,23 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/rizface/golang-api-template/app/controller/welcomecontroller"
-	"github.com/rizface/golang-api-template/app/repository/welcomerepository"
-	"github.com/rizface/golang-api-template/app/service/welcomeservice"
+	"github.com/rizface/golang-api-template/app/controller/authcontroller"
+	"github.com/rizface/golang-api-template/app/repository/userrepository"
+	"github.com/rizface/golang-api-template/app/service/authservice"
 )
 
 func SetupController(router *chi.Mux) {
-	// SETUP WELCOME REPOSITORY
-	welcomerepository := welcomerepository.New()
-	// SETUP WELCOME SERVICE
-	welcomeService := welcomeservice.New(welcomerepository)
-	// SETUP WELCOME CONTROLLER
-	welcomeController := welcomecontroller.New(welcomeService)
-	welcomecontroller.Setup(router, welcomeController)
+
+	userRepository := userrepository.New()
+	authService := authservice.New(userRepository)
+	authController := authcontroller.New(authService)
+	authcontroller.Setup(router, authController)
 }
 
 func CreateHttpServer(router http.Handler) *http.Server {
 	var appPort string
 
-	if len(appPort) == 0 {
+	if len(os.Getenv("APP_PORT")) == 0 {
 		appPort = "9000"
 	} else {
 		appPort = os.Getenv("APP_PORT")

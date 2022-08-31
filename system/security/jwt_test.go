@@ -12,8 +12,9 @@ import (
 
 func TestEncodeDataToJwt(t *testing.T) {
 	userData := &securityentity.UserData{
-		Id:   "id",
-		Name: "Fariz",
+		Id:       "id",
+		Name:     "Fariz",
+		Username: "rizface",
 	}
 	generatedResponseJwt := security.GenerateToken(userData)
 	assert.Equal(t, "securityentity.GeneratedResponseJwt", reflect.TypeOf(generatedResponseJwt).String())
