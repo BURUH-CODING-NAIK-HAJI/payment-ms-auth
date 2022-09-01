@@ -40,7 +40,7 @@ func (authservice *AuthService) Login(payload *requestentity.Login) securityenti
 
 	userDataForGenerateToken := &securityentity.UserData{
 		Id:       existingUser.Id,
-		Name:     existingUser.Name,
+		Name:     existingUser.Profile.Name,
 		Username: existingUser.Username,
 	}
 	generatedTokenSchema := security.GenerateToken(userDataForGenerateToken)

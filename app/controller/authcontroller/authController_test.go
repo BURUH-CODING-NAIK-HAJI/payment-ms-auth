@@ -33,11 +33,16 @@ func (m *Mock) FindOne(username string) (*responseentity.User, error) {
 	argUsername := args.Get(0).(string)
 	password, _ := bcrypt.GenerateFromPassword([]byte("dummy"), bcrypt.DefaultCost)
 	if argUsername == "valid" {
+		userId := uniuri.New()
 		return &responseentity.User{
-			Id:       uniuri.New(),
+			Id:       userId,
 			Username: "valid",
-			Name:     "name",
 			Password: string(password),
+			Profile: responseentity.Profile{
+				Id:     uniuri.New(),
+				UserId: userId,
+				Name:   "Valid",
+			},
 		}, nil
 	} else {
 		return nil, errors.New("internal server error")
