@@ -2,6 +2,7 @@ package authservice
 
 import (
 	"github.com/rizface/golang-api-template/app/entity/requestentity"
+	"github.com/rizface/golang-api-template/app/entity/responseentity"
 	"github.com/rizface/golang-api-template/app/entity/securityentity"
 	"github.com/rizface/golang-api-template/app/errorgroup"
 	"github.com/rizface/golang-api-template/app/repository/userrepository"
@@ -11,7 +12,7 @@ import (
 
 type AuthServiceInterface interface {
 	Login(payload *requestentity.Login) securityentity.GeneratedResponseJwt
-	Register()
+	Register(payload *requestentity.Register) *responseentity.User
 }
 
 type AuthService struct {
@@ -27,13 +28,14 @@ func New(userrepository userrepository.UserRepositoryInterface) AuthServiceInter
 func (authservice *AuthService) Login(payload *requestentity.Login) securityentity.GeneratedResponseJwt {
 	existingUser, err := authservice.userrepository.FindOne(payload.Username)
 	if err != nil {
+		// NEED LOG ORIGINAL ERROR MESSAGE
 		panic(errorgroup.InternalServerError)
 	}
 	if existingUser == nil {
 		panic(errorgroup.USER_NOT_FOUND)
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(payload.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(existingUser.Password.(string)), []byte(payload.Password))
 	if err != nil {
 		panic(errorgroup.UNAUTHORIZED)
 	}
@@ -47,5 +49,11 @@ func (authservice *AuthService) Login(payload *requestentity.Login) securityenti
 	return generatedTokenSchema
 }
 
-func (authservice *AuthService) Register() {
+func (authservice *AuthService) Register(payload *requestentity.Register) *responseentity.User {
+	result, err := authservice.userrepository.Create(payload)
+	if err != nil {
+		// NEED LOG ORIGINAL ERROR MESSAGE
+		panic(errorgroup.REGISTER_FAILED)
+	}
+	return result
 }

@@ -1,8 +1,8 @@
 package responseentity
 
 type User struct {
-	Id       string  `json:"id"`
-	Username string  `json:"username"`
-	Password string  `json:"password"`
-	Profile  Profile `json:"profile"`
+	Id       string      `json:"id"`
+	Username string      `json:"username"`
+	Password interface{} `json:"password,omitempty"`
+	Profile  Profile     `json:"profile"`
 }

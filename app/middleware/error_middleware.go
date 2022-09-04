@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/dchest/uniuri"
@@ -18,6 +19,7 @@ func ErrorHandler(next http.Handler) http.Handler {
 		log := logger.CreateErrorLogger()
 		defer func() {
 			err := recover()
+			fmt.Println(err)
 			if err != nil {
 				var errStruct = responseentity.Error{
 					Id: uniuri.New(),
@@ -49,6 +51,7 @@ func ErrorHandler(next http.Handler) http.Handler {
 					"trace": stackTrace,
 				}).Error(errStruct.Message)
 
+				w.Header().Add("Content-Type", "application/json")
 				w.WriteHeader(errStruct.Code)
 				json.NewEncoder(w).Encode(errStruct)
 			}

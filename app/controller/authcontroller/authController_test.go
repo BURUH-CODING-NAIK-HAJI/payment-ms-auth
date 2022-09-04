@@ -49,9 +49,23 @@ func (m *Mock) FindOne(username string) (*responseentity.User, error) {
 	}
 }
 
-func (m *Mock) Create() {
-	args := m.Called()
-	fmt.Println(args)
+func (m *Mock) Create(payload *requestentity.Register) (*responseentity.User, error) {
+	payload = m.Called(payload).Get(0).(*requestentity.Register)
+	if payload.Name == "Fariz" {
+		userId := uniuri.New()
+		return &responseentity.User{
+			Id:       userId,
+			Username: payload.Username,
+			Password: nil,
+			Profile: responseentity.Profile{
+				Id:     uniuri.New(),
+				UserId: userId,
+				Name:   payload.Name,
+			},
+		}, nil
+	}
+
+	return nil, errors.New("Error")
 }
 
 func TestAuthControllerSuccess(t *testing.T) {
@@ -79,6 +93,7 @@ func TestAuthControllerSuccess(t *testing.T) {
 	assert.Equal(t, payload.Username, generatedTokenSchema.UserData.Username)
 	assert.Equal(t, "string", reflect.TypeOf(generatedTokenSchema.TokenSchema.Bearer).String())
 	assert.Equal(t, "string", reflect.TypeOf(generatedTokenSchema.TokenSchema.Refresh).String())
+	fmt.Println(generatedTokenSchema)
 }
 
 func TestAuthControllerFailedPayloadNotAllowed(t *testing.T) {
@@ -103,4 +118,28 @@ func TestAuthControllerFailedPayloadNotAllowed(t *testing.T) {
 	request := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(payloadBytes))
 	recorder := httptest.NewRecorder()
 	controller.Login(recorder, request)
+}
+
+func TestRegisterSuccess(t *testing.T) {
+	repository := new(Mock)
+	service := authservice.New(repository)
+	controller := authcontroller.New(service)
+	payload := &requestentity.Register{
+		Name:     "Fariz",
+		Username: "riz",
+		Password: "password",
+	}
+
+	repository.On("Create", payload).Return(payload)
+	bytesPayload, _ := json.Marshal(payload)
+	request := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(bytesPayload))
+	recorder := httptest.NewRecorder()
+	controller.Register(recorder, request)
+
+	userDataResponse := new(responseentity.User)
+	byteResponse, _ := io.ReadAll(recorder.Result().Body)
+	json.Unmarshal(byteResponse, userDataResponse)
+
+	assert.Equal(t, http.StatusOK, recorder.Code)
+	assert.Equal(t, payload.Username, userDataResponse.Username)
 }

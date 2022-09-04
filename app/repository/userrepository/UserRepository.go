@@ -1,10 +1,13 @@
 package userrepository
 
-import "github.com/rizface/golang-api-template/app/entity/responseentity"
+import (
+	"github.com/rizface/golang-api-template/app/entity/requestentity"
+	"github.com/rizface/golang-api-template/app/entity/responseentity"
+)
 
 type UserRepositoryInterface interface {
 	FindOne(username string) (*responseentity.User, error)
-	Create()
+	Create(payload *requestentity.Register) (*responseentity.User, error)
 }
 
 type UserRepository struct {
@@ -18,5 +21,6 @@ func (userrepository *UserRepository) FindOne(username string) (*responseentity.
 	return nil, nil
 }
 
-func (userrepository *UserRepository) Create() {
+func (userrepository *UserRepository) Create(payload *requestentity.Register) (*responseentity.User, error) {
+	return nil, nil
 }

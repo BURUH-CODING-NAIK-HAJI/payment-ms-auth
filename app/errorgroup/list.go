@@ -31,4 +31,8 @@ var (
 		Code:    http.StatusBadRequest,
 		Message: "BAD_REQUEST",
 	}
+	REGISTER_FAILED = Error{
+		Code:    http.StatusBadRequest,
+		Message: "REGISTER_FAILED",
+	}
 )

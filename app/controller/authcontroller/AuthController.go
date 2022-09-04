@@ -50,4 +50,18 @@ func (auth *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (auth *AuthController) Register(w http.ResponseWriter, r *http.Request) {
+	payload := new(requestentity.Register)
+	err := json.NewDecoder(r.Body).Decode(payload)
+	if err != nil {
+		panic(errorgroup.InternalServerError)
+	}
+
+	err = payload.Validate()
+	if err != nil {
+		panic(err)
+	}
+
+	result := auth.authService.Register(payload)
+	w.Header().Add("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
 }
