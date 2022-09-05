@@ -26,9 +26,12 @@ func New(authService authservice.AuthServiceInterface) AuthControllerInterface {
 }
 
 func Setup(router *chi.Mux, controller AuthControllerInterface) *chi.Mux {
+	// router.Route("/v1/auth", func(r chi.Router) {
+	// 	r.Post("/login", controller.Login)
+	// 	r.Post("/register", controller.Register)
+	// })
 	router.Post("/login", controller.Login)
 	router.Post("/register", controller.Register)
-
 	return router
 }
 

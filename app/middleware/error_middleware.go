@@ -19,7 +19,6 @@ func ErrorHandler(next http.Handler) http.Handler {
 		log := logger.CreateErrorLogger()
 		defer func() {
 			err := recover()
-			fmt.Println(err)
 			if err != nil {
 				var errStruct = responseentity.Error{
 					Id: uniuri.New(),
@@ -41,6 +40,8 @@ func ErrorHandler(next http.Handler) http.Handler {
 
 				if convertedError, ok := err.(error); ok {
 					convertedErrorMessage = convertedError.Error()
+				} else if customError, ok := err.(errorgroup.Error); ok {
+					convertedErrorMessage = customError.Message
 				} else {
 					convertedErrorMessage = err.(string)
 				}
@@ -51,12 +52,13 @@ func ErrorHandler(next http.Handler) http.Handler {
 					"trace": stackTrace,
 				}).Error(errStruct.Message)
 
-				w.Header().Add("Content-Type", "application/json")
 				w.WriteHeader(errStruct.Code)
 				json.NewEncoder(w).Encode(errStruct)
 			}
 		}()
 
+		w.Header().Add("Content-Type", "application/json")
+		fmt.Println(r.URL.Path)
 		next.ServeHTTP(w, r)
 	})
 }
