@@ -17,6 +17,7 @@ import (
 	"github.com/rizface/golang-api-template/app/entity/responseentity"
 	"github.com/rizface/golang-api-template/app/entity/securityentity"
 	"github.com/rizface/golang-api-template/app/service/authservice"
+	"github.com/rizface/golang-api-template/database/myredis"
 	"github.com/rizface/golang-api-template/system/router"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -69,7 +70,8 @@ func (m *Mock) Create(payload *requestentity.Register) (*responseentity.User, er
 
 func TestAuthControllerSuccess(t *testing.T) {
 	repository := new(Mock)
-	service := authservice.New(repository)
+	redis := myredis.New()
+	service := authservice.New(repository, redis)
 	controller := authcontroller.New(service)
 	router := router.CreateRouter()
 	authcontroller.Setup(router, controller)
@@ -104,7 +106,8 @@ func TestAuthControllerFailedPayloadNotAllowed(t *testing.T) {
 	}()
 
 	repository := new(Mock)
-	service := authservice.New(repository)
+	redis := myredis.New()
+	service := authservice.New(repository, redis)
 	controller := authcontroller.New(service)
 	router := router.CreateRouter()
 	authcontroller.Setup(router, controller)
@@ -120,7 +123,8 @@ func TestAuthControllerFailedPayloadNotAllowed(t *testing.T) {
 
 func TestRegisterSuccess(t *testing.T) {
 	repository := new(Mock)
-	service := authservice.New(repository)
+	redis := myredis.New()
+	service := authservice.New(repository, redis)
 	controller := authcontroller.New(service)
 	payload := &requestentity.Register{
 		Name:     "Fariz",

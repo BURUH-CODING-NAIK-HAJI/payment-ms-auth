@@ -32,7 +32,6 @@ func (userrepository *UserRepository) FindOne(username string) (*responseentity.
 		Headers: nil,
 	}
 	response, err := httpclient.New(&client)
-	fmt.Println(err)
 	if err != nil {
 		return nil, err
 	}

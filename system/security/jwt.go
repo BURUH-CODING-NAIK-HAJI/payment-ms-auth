@@ -47,7 +47,7 @@ func EncodeDataToToken(secret string, userData *securityentity.UserData, expired
 func GenerateToken(userData *securityentity.UserData) securityentity.GeneratedResponseJwt {
 	bearerSecret, refreshSecret := getSecret()
 	bearerToken := EncodeDataToToken(bearerSecret, userData, time.Now().Add(24*time.Hour))
-	refreshToken := EncodeDataToToken(refreshSecret, userData, time.Now().Add(24*30*time.Hour))
+	refreshToken := EncodeDataToToken(refreshSecret, userData, time.Now().Add(24*time.Hour*30))
 
 	return securityentity.GeneratedResponseJwt{
 		User: *userData,

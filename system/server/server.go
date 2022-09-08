@@ -9,12 +9,14 @@ import (
 	"github.com/rizface/golang-api-template/app/controller/authcontroller"
 	"github.com/rizface/golang-api-template/app/repository/userrepository"
 	"github.com/rizface/golang-api-template/app/service/authservice"
+	"github.com/rizface/golang-api-template/database/myredis"
 )
 
 func SetupController(router *chi.Mux) {
 
 	userRepository := userrepository.New()
-	authService := authservice.New(userRepository)
+	redis := myredis.New()
+	authService := authservice.New(userRepository, redis)
 	authController := authcontroller.New(authService)
 	authcontroller.Setup(router, authController)
 }

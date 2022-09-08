@@ -18,8 +18,8 @@ func TestEncodeDataToJwt(t *testing.T) {
 	}
 	generatedResponseJwt := security.GenerateToken(userData)
 	assert.Equal(t, "securityentity.GeneratedResponseJwt", reflect.TypeOf(generatedResponseJwt).String())
-	assert.Equal(t, "string", reflect.TypeOf(generatedResponseJwt.TokenSchema.Bearer).String())
-	assert.Equal(t, "string", reflect.TypeOf(generatedResponseJwt.TokenSchema.Refresh).String())
+	assert.Equal(t, "string", reflect.TypeOf(generatedResponseJwt.Token.Bearer).String())
+	assert.Equal(t, "string", reflect.TypeOf(generatedResponseJwt.Token.Refresh).String())
 }
 
 func TestDecodeBearerJwt(t *testing.T) {
