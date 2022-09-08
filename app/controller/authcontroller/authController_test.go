@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -90,10 +89,9 @@ func TestAuthControllerSuccess(t *testing.T) {
 	generatedTokenSchema := new(securityentity.GeneratedResponseJwt)
 	json.Unmarshal(responseBody, generatedTokenSchema)
 	assert.Equal(t, http.StatusOK, recorder.Code)
-	assert.Equal(t, payload.Username, generatedTokenSchema.UserData.Username)
-	assert.Equal(t, "string", reflect.TypeOf(generatedTokenSchema.TokenSchema.Bearer).String())
-	assert.Equal(t, "string", reflect.TypeOf(generatedTokenSchema.TokenSchema.Refresh).String())
-	fmt.Println(generatedTokenSchema)
+	assert.Equal(t, payload.Username, generatedTokenSchema.User.Username)
+	assert.Equal(t, "string", reflect.TypeOf(generatedTokenSchema.Token.Bearer).String())
+	assert.Equal(t, "string", reflect.TypeOf(generatedTokenSchema.Token.Refresh).String())
 }
 
 func TestAuthControllerFailedPayloadNotAllowed(t *testing.T) {

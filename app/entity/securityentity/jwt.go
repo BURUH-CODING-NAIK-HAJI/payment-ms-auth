@@ -12,6 +12,6 @@ type TokenSchema struct {
 }
 
 type GeneratedResponseJwt struct {
-	UserData    UserData    `json:"userData"`
-	TokenSchema TokenSchema `json:"token"`
+	User  UserData    `json:"User"`
+	Token TokenSchema `json:"token"`
 }

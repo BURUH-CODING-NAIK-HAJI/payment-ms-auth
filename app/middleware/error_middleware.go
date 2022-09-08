@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/dchest/uniuri"
@@ -58,7 +57,6 @@ func ErrorHandler(next http.Handler) http.Handler {
 		}()
 
 		w.Header().Add("Content-Type", "application/json")
-		fmt.Println(r.URL.Path)
 		next.ServeHTTP(w, r)
 	})
 }

@@ -19,7 +19,6 @@ func getRootPath() string {
 
 func CreateErrorLogger() *logrus.Logger {
 	path := getRootPath()
-	fmt.Println(path)
 	errorLogFile, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		fmt.Println("Server Shutdown, Log File Not Found")

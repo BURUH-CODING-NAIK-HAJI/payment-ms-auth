@@ -50,8 +50,8 @@ func GenerateToken(userData *securityentity.UserData) securityentity.GeneratedRe
 	refreshToken := EncodeDataToToken(refreshSecret, userData, time.Now().Add(24*30*time.Hour))
 
 	return securityentity.GeneratedResponseJwt{
-		UserData: *userData,
-		TokenSchema: securityentity.TokenSchema{
+		User: *userData,
+		Token: securityentity.TokenSchema{
 			Bearer:  bearerToken,
 			Refresh: refreshToken,
 		},
