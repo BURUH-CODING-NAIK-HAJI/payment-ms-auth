@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"reflect"
 	"testing"
 
@@ -26,6 +27,13 @@ import (
 
 type Mock struct {
 	mock.Mock
+}
+
+func TestMain(m *testing.M) {
+	os.Setenv("REDIS_HOST", "go-payment-redis")
+	os.Setenv("REDIS_USERNAME", "root")
+	os.Setenv("REDIS_PASSWORD", "root")
+	m.Run()
 }
 
 func (m *Mock) FindOne(username string) (*responseentity.User, error) {
@@ -73,8 +81,6 @@ func TestAuthControllerSuccess(t *testing.T) {
 	redis := myredis.New()
 	service := authservice.New(repository, redis)
 	controller := authcontroller.New(service)
-	router := router.CreateRouter()
-	authcontroller.Setup(router, controller)
 
 	repository.On("FindOne", "valid").Return("valid")
 	payload := requestentity.Login{
