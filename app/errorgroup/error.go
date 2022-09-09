@@ -1,10 +1,11 @@
 package errorgroup
 
 type Error struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+	Id      interface{} `json:"id"`
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
 }
 
-func (error *Error) Error() string {
+func (error Error) Error() string {
 	return error.Message
 }

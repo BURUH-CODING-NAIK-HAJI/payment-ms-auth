@@ -35,7 +35,7 @@ func ErrorHandler(next http.Handler) http.Handler {
 				}
 
 				var convertedErrorMessage string
-				stackTrace := errors.Wrap(err, 1).ErrorStack()
+				stackTrace := errors.Wrap(err, 2).ErrorStack()
 
 				if convertedError, ok := err.(error); ok {
 					convertedErrorMessage = convertedError.Error()

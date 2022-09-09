@@ -38,11 +38,7 @@ func New(
 func (authservice *AuthService) Login(payload *requestentity.Login) securityentity.GeneratedResponseJwt {
 	existingUser, err := authservice.userrepository.FindOne(payload.Username)
 	if err != nil {
-		// NEED LOG ORIGINAL ERROR MESSAGE
-		panic(errorgroup.InternalServerError)
-	}
-	if existingUser == nil {
-		panic(errorgroup.USER_NOT_FOUND)
+		panic(err)
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(existingUser.Password.(string)), []byte(payload.Password))
@@ -76,8 +72,7 @@ func (authservice *AuthService) Login(payload *requestentity.Login) securityenti
 func (authservice *AuthService) Register(payload *requestentity.Register) *responseentity.User {
 	result, err := authservice.userrepository.Create(payload)
 	if err != nil {
-		// NEED LOG ORIGINAL ERROR MESSAGE
-		panic(errorgroup.REGISTER_FAILED)
+		panic(err)
 	}
 	return result
 }
