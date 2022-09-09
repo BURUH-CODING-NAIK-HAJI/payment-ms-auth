@@ -7,12 +7,13 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/dchest/uniuri"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-redis/redismock/v8"
 	"github.com/rizface/golang-api-template/app/controller/authcontroller"
 	"github.com/rizface/golang-api-template/app/entity/requestentity"
 	"github.com/rizface/golang-api-template/app/entity/responseentity"
@@ -27,13 +28,6 @@ import (
 
 type Mock struct {
 	mock.Mock
-}
-
-func TestMain(m *testing.M) {
-	os.Setenv("REDIS_HOST", "go-payment-redis")
-	os.Setenv("REDIS_USERNAME", "root")
-	os.Setenv("REDIS_PASSWORD", "root")
-	m.Run()
 }
 
 func (m *Mock) FindOne(username string) (*responseentity.User, error) {
@@ -78,8 +72,9 @@ func (m *Mock) Create(payload *requestentity.Register) (*responseentity.User, er
 
 func TestAuthControllerSuccess(t *testing.T) {
 	repository := new(Mock)
-	redis := myredis.New()
-	service := authservice.New(repository, redis)
+	db, mock := redismock.NewClientMock()
+	mock.Regexp().ExpectSet("[a-zA-Z0-9]", "[a-zA-Z0-9]", 24*time.Hour*30).SetVal("success")
+	service := authservice.New(repository, db)
 	controller := authcontroller.New(service)
 
 	repository.On("FindOne", "valid").Return("valid")
