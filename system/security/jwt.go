@@ -19,7 +19,7 @@ func getSecret() (string, string) {
 }
 
 type JwtClaim struct {
-	userData securityentity.UserData
+	UserData securityentity.UserData
 	jwt.RegisteredClaims
 }
 
