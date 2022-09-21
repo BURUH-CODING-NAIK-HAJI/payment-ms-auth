@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/rizface/golang-api-template/app/entity/requestentity"
+	"github.com/rizface/golang-api-template/app/entity/responseentity"
 	"github.com/rizface/golang-api-template/app/errorgroup"
 	"github.com/rizface/golang-api-template/app/service/authservice"
 )
@@ -45,7 +46,11 @@ func (auth *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 
 	result := auth.authService.Login(payload)
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(responseentity.Response{
+		Code:    http.StatusOK,
+		Message: "SUCCESS",
+		Data:    result,
+	})
 }
 
 func (auth *AuthController) Register(w http.ResponseWriter, r *http.Request) {
@@ -62,5 +67,9 @@ func (auth *AuthController) Register(w http.ResponseWriter, r *http.Request) {
 
 	result := auth.authService.Register(payload)
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(responseentity.Response{
+		Code:    http.StatusOK,
+		Message: "SUCCESS",
+		Data:    result,
+	})
 }

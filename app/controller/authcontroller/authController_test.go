@@ -17,7 +17,6 @@ import (
 	"github.com/rizface/golang-api-template/app/controller/authcontroller"
 	"github.com/rizface/golang-api-template/app/entity/requestentity"
 	"github.com/rizface/golang-api-template/app/entity/responseentity"
-	"github.com/rizface/golang-api-template/app/entity/securityentity"
 	"github.com/rizface/golang-api-template/app/service/authservice"
 	"github.com/rizface/golang-api-template/database/myredis"
 	"github.com/rizface/golang-api-template/system/router"
@@ -88,13 +87,16 @@ func TestAuthControllerSuccess(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	controller.Login(recorder, request)
 
+	response := new(responseentity.Response)
 	responseBody, _ := io.ReadAll(recorder.Result().Body)
-	generatedTokenSchema := new(securityentity.GeneratedResponseJwt)
-	json.Unmarshal(responseBody, generatedTokenSchema)
+	json.Unmarshal(responseBody, response)
+	user := response.Data.(map[string]interface{})["user"].(map[string]interface{})
+	token := response.Data.(map[string]interface{})["token"].(map[string]interface{})
+
+	assert.Equal(t, payload.Username, user["username"])
+	assert.Equal(t, "string", reflect.TypeOf(token["bearer"]).String())
+	assert.Equal(t, "string", reflect.TypeOf(token["refresh"]).String())
 	assert.Equal(t, http.StatusOK, recorder.Code)
-	assert.Equal(t, payload.Username, generatedTokenSchema.User.Username)
-	assert.Equal(t, "string", reflect.TypeOf(generatedTokenSchema.Token.Bearer).String())
-	assert.Equal(t, "string", reflect.TypeOf(generatedTokenSchema.Token.Refresh).String())
 }
 
 func TestAuthControllerFailedPayloadNotAllowed(t *testing.T) {
@@ -139,10 +141,10 @@ func TestRegisterSuccess(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	controller.Register(recorder, request)
 
-	userDataResponse := new(responseentity.User)
-	byteResponse, _ := io.ReadAll(recorder.Result().Body)
-	json.Unmarshal(byteResponse, userDataResponse)
+	response := new(responseentity.Response)
+	responseBody, _ := io.ReadAll(recorder.Result().Body)
+	json.Unmarshal(responseBody, response)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
-	assert.Equal(t, payload.Username, userDataResponse.Username)
+	assert.Equal(t, payload.Username, response.Data.(map[string]interface{})["username"].(string))
 }
