@@ -48,12 +48,15 @@ func (userrepository *UserRepository) FindOne(username string) (*responseentity.
 		return nil, err
 	}
 	if response.StatusCode == http.StatusOK {
-		user := new(responseentity.User)
-		err = json.Unmarshal(bytesResponse, user)
+		response := new(responseentity.Response)
+		err = json.Unmarshal(bytesResponse, response)
 		if err != nil {
 			return nil, err
 		}
 
+		user := new(responseentity.User)
+		userBytes, _ := json.Marshal(response.Data)
+		json.Unmarshal(userBytes, user)
 		return user, nil
 	}
 	return nil, generateErrorGroup(bytesResponse)
@@ -82,12 +85,15 @@ func (userrepository *UserRepository) Create(payload *requestentity.Register) (*
 	}
 
 	if response.StatusCode == http.StatusOK {
-		user := new(responseentity.User)
-		err = json.Unmarshal(bytesResponse, user)
+		response := new(responseentity.Response)
+		err = json.Unmarshal(bytesResponse, response)
 		if err != nil {
 			return nil, err
 		}
 
+		user := new(responseentity.User)
+		userBytes, _ := json.Marshal(response.Data)
+		json.Unmarshal(userBytes, user)
 		return user, nil
 	}
 
